@@ -4,9 +4,11 @@ from tkinter import ttk
 
 
 def vies_search(vat_id='317555100', country_code='DE'):
+    vat_id = e1_value.get()
+    country_code = l2["text"]
     try:
         vies = api.Vies()
-        result = vies.request('317555100', 'DE', extended_info=True)
+        result = vies.request(vat_id, country_code, extended_info=True)
         # '17890798564', 'FR'
         # works as well
         # result = vies.request('RO2785503')
@@ -19,13 +21,12 @@ def vies_search(vat_id='317555100', country_code='DE'):
     except api.ViesError as e:
         print(e)
     else:
-        print(result)
+        t1.insert(tk.END, result)
         return result
 
 
 def callback(event):
     selected = event.widget.get()
-    print(selected)
     l2['text'] = country_list[selected]
 
 
@@ -40,24 +41,25 @@ country_list = {'Austria': 'AT', 'Belgium': 'BE', 'Bulgaria': 'BG', 'Cyprus': 'C
 
 l1 = tk.Label(text="Please select the country:")
 combobox_values = list(country_list)
-print(combobox_values)
 d1 = ttk.Combobox(window, values=combobox_values)
+d1.current(5)
 l2 = tk.Label(text='Country code')
-
 l3 = tk.Label(text='Please enter VAT ID:')
-e1 = tk.Entry()
-button = tk.Button(
-    text="Search!", command=vies_search
-)
+
+e1_value = tk.StringVar()
+e1 = tk.Entry(window, textvariable=e1_value)
+e1.insert(0, "317555100")
+
+button = tk.Button(text="Search!", command=vies_search)
+t1 = tk.Text(window,height=15, width=40)
 l1.grid(row=0, column=0)
 d1.grid(row=0, column=1)
 l2.grid(row=0, column=2)
 l3.grid(row=1, column=0)
 e1.grid(row=1, column=1)
 button.grid(row=1, column=3)
+t1.grid(row=2, column=0, columnspan=4)
 
 d1.bind("<<ComboboxSelected>>", callback)
 
 window.mainloop()
-
-#print(vies_search())
